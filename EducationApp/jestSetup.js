@@ -61,3 +61,11 @@ jest.mock('react-native/src/private/animated/NativeAnimatedHelper.js', () => {
     now: jest.fn(),
   };
 });
+
+// NativeAnimatedModule mock
+NativeModules.NativeAnimatedModule = {
+    startListeningToAnimatedNodeValue: jest.fn(),
+    stopListeningToAnimatedNodeValue: jest.fn(),
+    connectAnimatedNodes: jest.fn(),
+    disconnectAnimatedNodes: jest.fn(),
+};
