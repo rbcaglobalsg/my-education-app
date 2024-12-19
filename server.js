@@ -1,4 +1,3 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -398,7 +397,8 @@ app.get('/api/availability', async (req, res) => {
     });
 });
 
-const PORT = 3000;
+// 포트를 process.env.PORT로 변경
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });

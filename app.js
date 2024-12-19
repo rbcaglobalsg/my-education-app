@@ -3,7 +3,10 @@ async function submitForm(event) {
     const formData = gatherFormData();
 
     try {
-        const response = await fetch('http://localhost:3000/api/submit', {
+        // 로컬 환경에서 http://localhost:3000 을 사용할 수도 있지만
+        // 배포 환경에선 상대 경로로 요청하는 것이 안전.
+        // 서버와 동일 도메인에서 /api/submit로 접근
+        const response = await fetch('/api/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
