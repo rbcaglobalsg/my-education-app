@@ -1,13 +1,32 @@
 // EducationApp/jestSetup.js
-import 'react-native-gesture-handler/jestSetup';
 
-// 여기에서 추가적으로 필요하다면 다른 네이티브 모듈 mock 설정 가능
-// 예: Reanimated mock
-jest.mock('react-native-reanimated', () => {
-  const Reanimated = require('react-native-reanimated/mock');
-  // 재정의하거나 필요한 mock 동작 추가
-  Reanimated.default.call = () => {};
-  return Reanimated;
+import { NativeModules } from 'react-native';
+
+// 기본적으로 PushNotificationIOS 네이티브 모듈 mocking
+NativeModules.PushNotificationIOS = {
+  addEventListener: jest.fn(),
+  requestPermissions: jest.fn(),
+  checkPermissions: jest.fn(),
+  removeEventListener: jest.fn(),
+  presentLocalNotification: jest.fn(),
+  scheduleLocalNotification: jest.fn(),
+  cancelAllLocalNotifications: jest.fn(),
+  getDeliveredNotifications: jest.fn((callback) => callback([])),
+  removeAllDeliveredNotifications: jest.fn(),
+  removeDeliveredNotifications: jest.fn(),
+};
+
+// react-native-push-notification 모듈도 모킹
+jest.mock('react-native-push-notification', () => {
+  return {
+    configure: jest.fn(),
+    localNotification: jest.fn(),
+    cancelAllLocalNotifications: jest.fn(),
+    createChannel: jest.fn((_, cb) => cb && cb()),
+    localNotificationSchedule: jest.fn(),
+    requestPermissions: jest.fn(),
+    checkPermissions: jest.fn((cb) => cb({ alert: true, badge: true, sound: true })),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+  };
 });
-
-// 필요하다면 react-native-safe-area-context, react-navigation 관련 mock도 추가 가능
