@@ -1,9 +1,8 @@
 // EducationApp/jestSetup.js
 
 import 'react-native-gesture-handler/jestSetup';
-import { NativeModules } from 'react-native';
 
-// 먼저 react-native 전체를 mock
+// 먼저 react-native 전체를 mock하고 NativeAnimatedModule를 정의
 jest.mock('react-native', () => {
   const RN = jest.requireActual('react-native');
   // NativeModules.NativeAnimatedModule 정의
@@ -34,7 +33,8 @@ jest.mock('react-native', () => {
   return RN;
 });
 
-import { NativeModules } from 'react-native';
+// 이제 react-native mock 후에 require로 NativeModules 가져오기
+const { NativeModules } = require('react-native');
 
 // PushNotificationIOS 네이티브 모듈 mock
 NativeModules.PushNotificationIOS = {
@@ -91,25 +91,18 @@ jest.mock('react-native-reanimated', () => {
 
 // mockedRequestAnimationFrame mock
 jest.mock('react-native-reanimated/src/mockedRequestAnimationFrame', () => ({
-    requestAnimationFrame: jest.fn(cb => cb && cb()),
-    cancelAnimationFrame: jest.fn(),
+  requestAnimationFrame: jest.fn(cb => cb && cb()),
+  cancelAnimationFrame: jest.fn(),
 }));
 
 // Easing 모듈 mock
 jest.mock('react-native/Libraries/Animated/Easing', () => ({
-    bezier: jest.fn(() => () => 0),
-    in: jest.fn(),
-    out: jest.fn(),
-    inOut: jest.fn(),
-    linear: jest.fn(),
-    ease: jest.fn(),
-    elastic: jest.fn(),
-    bounce: jest.fn(),
+  bezier: jest.fn(() => () => 0),
+  in: jest.fn(),
+  out: jest.fn(),
+  inOut: jest.fn(),
+  linear: jest.fn(),
+  ease: jest.fn(),
+  elastic: jest.fn(),
+  bounce: jest.fn(),
 }));
-
-// NativeAnimatedHelper mock (경로 불필요시 제거 가능)
-// jest.mock('react-native/src/private/animated/NativeAnimatedHelper.js', () => ({
-//   now: jest.fn(),
-// }));
-
-// 위 mock들로 인해 애니메이션 관련 비동기 처리나 undefined 에러 없애기 기대
