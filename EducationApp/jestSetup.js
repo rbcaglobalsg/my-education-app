@@ -55,17 +55,30 @@ jest.mock('react-native-reanimated', () => {
   return Reanimated;
 });
 
-// NativeAnimatedHelper mock (시도 1: .js 확장자)
-jest.mock('react-native/src/private/animated/NativeAnimatedHelper.js', () => {
-  return {
-    now: jest.fn(),
-  };
-});
+// NativeAnimatedHelper mock
+jest.mock('react-native/src/private/animated/NativeAnimatedHelper.js', () => ({
+  now: jest.fn(),
+}));
 
-// NativeAnimatedModule mock
+// NativeAnimatedModule mock - 모든 필요한 메서드 추가
 NativeModules.NativeAnimatedModule = {
-    startListeningToAnimatedNodeValue: jest.fn(),
-    stopListeningToAnimatedNodeValue: jest.fn(),
-    connectAnimatedNodes: jest.fn(),
-    disconnectAnimatedNodes: jest.fn(),
+  createAnimatedNode: jest.fn(),
+  connectAnimatedNodes: jest.fn(),
+  disconnectAnimatedNodes: jest.fn(),
+  startListeningToAnimatedNodeValue: jest.fn(),
+  stopListeningToAnimatedNodeValue: jest.fn(),
+  setAnimatedNodeValue: jest.fn(),
+  setAnimatedNodeOffset: jest.fn(),
+  flattenAnimatedNodeOffset: jest.fn(),
+  extractAnimatedNodeOffset: jest.fn(),
+  connectAnimatedNodeToView: jest.fn(),
+  disconnectAnimatedNodeFromView: jest.fn(),
+  restoreDefaultValues: jest.fn(),
+  dropAnimatedNode: jest.fn(),
+  startAnimatingNode: jest.fn(),
+  stopAnimation: jest.fn(),
+  event: jest.fn(),
+  getValue: jest.fn(),
+  addAnimatedEventToView: jest.fn(),
+  removeAnimatedEventFromView: jest.fn(),
 };
