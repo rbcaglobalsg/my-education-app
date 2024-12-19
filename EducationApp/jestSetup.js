@@ -96,13 +96,16 @@ jest.mock('react-native-reanimated/src/mockedRequestAnimationFrame', () => ({
 }));
 
 // Easing 모듈 mock
-jest.mock('react-native/Libraries/Animated/Easing', () => ({
-  bezier: jest.fn(() => () => 0),
-  in: jest.fn(),
-  out: jest.fn(),
-  inOut: jest.fn(),
-  linear: jest.fn(),
-  ease: jest.fn(),
-  elastic: jest.fn(),
-  bounce: jest.fn(),
-}));
+jest.mock('react-native/Libraries/Animated/Easing', () => {
+    const mockEasingFn = jest.fn((t) => t); // t를 받아 그대로 반환하는 더미 함수
+    return {
+      bezier: jest.fn(() => mockEasingFn),
+      in: jest.fn(() => mockEasingFn),
+      out: jest.fn(() => mockEasingFn),
+      inOut: jest.fn(() => mockEasingFn),
+      linear: jest.fn(() => mockEasingFn),
+      ease: jest.fn(() => mockEasingFn),
+      elastic: jest.fn(() => mockEasingFn),
+      bounce: jest.fn(() => mockEasingFn),
+    };
+});
