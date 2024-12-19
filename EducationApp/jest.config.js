@@ -8,5 +8,5 @@ module.exports = {
     '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
     '^@stripe/stripe-react-native$': '<rootDir>/__mocks__/@stripe/stripe-react-native.js'
   },
-  testEnvironment: 'jsdom', // 이 줄을 추가
+  testEnvironment: 'jest-environment-jsdom', // 여기 변경
 };
