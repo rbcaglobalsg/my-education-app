@@ -1,6 +1,7 @@
 // EducationApp/jestSetup.js
 
 import 'react-native-gesture-handler/jestSetup';
+import { NativeModules } from 'react-native';
 
 // 먼저 react-native 전체를 mock
 jest.mock('react-native', () => {
@@ -87,6 +88,24 @@ jest.mock('react-native-reanimated', () => {
   Reanimated.default.call = () => {};
   return Reanimated;
 });
+
+// mockedRequestAnimationFrame mock
+jest.mock('react-native-reanimated/src/mockedRequestAnimationFrame', () => ({
+    requestAnimationFrame: jest.fn(cb => cb && cb()),
+    cancelAnimationFrame: jest.fn(),
+}));
+
+// Easing 모듈 mock
+jest.mock('react-native/Libraries/Animated/Easing', () => ({
+    bezier: jest.fn(() => () => 0),
+    in: jest.fn(),
+    out: jest.fn(),
+    inOut: jest.fn(),
+    linear: jest.fn(),
+    ease: jest.fn(),
+    elastic: jest.fn(),
+    bounce: jest.fn(),
+}));
 
 // NativeAnimatedHelper mock (경로 불필요시 제거 가능)
 // jest.mock('react-native/src/private/animated/NativeAnimatedHelper.js', () => ({
