@@ -47,3 +47,11 @@ jest.mock('react-native-push-notification', () => ({
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 );
+
+// react-native-reanimated mock
+jest.mock('react-native-reanimated', () => {
+  const Reanimated = require('react-native-reanimated/mock');
+  // reanimated 기본 동작 수정: call 메서드가 오류 없이 동작하도록 noop 처리
+  Reanimated.default.call = () => {};
+  return Reanimated;
+});

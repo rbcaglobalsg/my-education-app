@@ -1,9 +1,9 @@
 // EducationApp/jest.config.js
 module.exports = {
   preset: 'react-native',
-  setupFiles: ['./jestSetup.js'],  // setupFilesAfterEnv 대신 setupFiles 사용
+  setupFiles: ['./jestSetup.js'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|react-native|@react-native|react-navigation|react-native-gesture-handler|@stripe|@react-native-async-storage))'
+    'node_modules/(?!((jest-)?react-native|react-native|@react-native|react-navigation|react-native-gesture-handler|@stripe|@react-native-async-storage|react-native-reanimated))'
   ],
   moduleNameMapper: {
     '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
