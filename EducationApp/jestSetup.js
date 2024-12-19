@@ -98,3 +98,7 @@ jest.mock('react-native-reanimated/src/mockedRequestAnimationFrame', () => ({
 //   const ActualEasing = jest.requireActual('react-native/Libraries/Animated/Easing');
 //   return ActualEasing;
 // });
+
+// requestAnimationFrame mock
+global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+global.cancelAnimationFrame = (id) => clearTimeout(id);
