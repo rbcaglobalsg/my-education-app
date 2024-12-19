@@ -1,5 +1,38 @@
 // EducationApp/jestSetup.js
+
 import 'react-native-gesture-handler/jestSetup';
+
+// 먼저 react-native 전체를 mock
+jest.mock('react-native', () => {
+  const RN = jest.requireActual('react-native');
+  // NativeModules.NativeAnimatedModule 정의
+  RN.NativeModules = {
+    ...RN.NativeModules,
+    NativeAnimatedModule: {
+      createAnimatedNode: jest.fn(),
+      connectAnimatedNodes: jest.fn(),
+      disconnectAnimatedNodes: jest.fn(),
+      startListeningToAnimatedNodeValue: jest.fn(),
+      stopListeningToAnimatedNodeValue: jest.fn(),
+      setAnimatedNodeValue: jest.fn(),
+      setAnimatedNodeOffset: jest.fn(),
+      flattenAnimatedNodeOffset: jest.fn(),
+      extractAnimatedNodeOffset: jest.fn(),
+      connectAnimatedNodeToView: jest.fn(),
+      disconnectAnimatedNodeFromView: jest.fn(),
+      restoreDefaultValues: jest.fn(),
+      dropAnimatedNode: jest.fn(),
+      startAnimatingNode: jest.fn(),
+      stopAnimation: jest.fn(),
+      event: jest.fn(),
+      getValue: jest.fn(),
+      addAnimatedEventToView: jest.fn(),
+      removeAnimatedEventFromView: jest.fn(),
+    }
+  };
+  return RN;
+});
+
 import { NativeModules } from 'react-native';
 
 // PushNotificationIOS 네이티브 모듈 mock
@@ -55,30 +88,9 @@ jest.mock('react-native-reanimated', () => {
   return Reanimated;
 });
 
-// NativeAnimatedHelper mock
-jest.mock('react-native/src/private/animated/NativeAnimatedHelper.js', () => ({
-  now: jest.fn(),
-}));
+// NativeAnimatedHelper mock (경로 불필요시 제거 가능)
+// jest.mock('react-native/src/private/animated/NativeAnimatedHelper.js', () => ({
+//   now: jest.fn(),
+// }));
 
-// NativeAnimatedModule mock - 모든 필요한 메서드 추가
-NativeModules.NativeAnimatedModule = {
-  createAnimatedNode: jest.fn(),
-  connectAnimatedNodes: jest.fn(),
-  disconnectAnimatedNodes: jest.fn(),
-  startListeningToAnimatedNodeValue: jest.fn(),
-  stopListeningToAnimatedNodeValue: jest.fn(),
-  setAnimatedNodeValue: jest.fn(),
-  setAnimatedNodeOffset: jest.fn(),
-  flattenAnimatedNodeOffset: jest.fn(),
-  extractAnimatedNodeOffset: jest.fn(),
-  connectAnimatedNodeToView: jest.fn(),
-  disconnectAnimatedNodeFromView: jest.fn(),
-  restoreDefaultValues: jest.fn(),
-  dropAnimatedNode: jest.fn(),
-  startAnimatingNode: jest.fn(),
-  stopAnimation: jest.fn(),
-  event: jest.fn(),
-  getValue: jest.fn(),
-  addAnimatedEventToView: jest.fn(),
-  removeAnimatedEventFromView: jest.fn(),
-};
+// 위 mock들로 인해 애니메이션 관련 비동기 처리나 undefined 에러 없애기 기대
