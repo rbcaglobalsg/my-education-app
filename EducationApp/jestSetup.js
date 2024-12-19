@@ -2,10 +2,9 @@
 
 import 'react-native-gesture-handler/jestSetup';
 
-// 먼저 react-native 전체를 mock하고 NativeAnimatedModule를 정의
+// 먼저 react-native 전체를 mock하고 NativeAnimatedModule 정의
 jest.mock('react-native', () => {
   const RN = jest.requireActual('react-native');
-  // NativeModules.NativeAnimatedModule 정의
   RN.NativeModules = {
     ...RN.NativeModules,
     NativeAnimatedModule: {
@@ -33,7 +32,6 @@ jest.mock('react-native', () => {
   return RN;
 });
 
-// 이제 react-native mock 후에 require로 NativeModules 가져오기
 const { NativeModules } = require('react-native');
 
 // PushNotificationIOS 네이티브 모듈 mock
@@ -95,17 +93,8 @@ jest.mock('react-native-reanimated/src/mockedRequestAnimationFrame', () => ({
   cancelAnimationFrame: jest.fn(),
 }));
 
-// Easing 모듈 mock
-jest.mock('react-native/Libraries/Animated/Easing', () => {
-    const mockEasingFn = jest.fn((t) => t); // t를 받아 그대로 반환하는 더미 함수
-    return {
-      bezier: jest.fn(() => mockEasingFn),
-      in: jest.fn(() => mockEasingFn),
-      out: jest.fn(() => mockEasingFn),
-      inOut: jest.fn(() => mockEasingFn),
-      linear: jest.fn(() => mockEasingFn),
-      ease: jest.fn(() => mockEasingFn),
-      elastic: jest.fn(() => mockEasingFn),
-      bounce: jest.fn(() => mockEasingFn),
-    };
-});
+// Easing에 대한 mock 제거 또는 최소화
+// jest.mock('react-native/Libraries/Animated/Easing', () => {
+//   const ActualEasing = jest.requireActual('react-native/Libraries/Animated/Easing');
+//   return ActualEasing;
+// });
