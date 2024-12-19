@@ -1,17 +1,45 @@
 // EducationApp/jestSetup.js
 
 import 'react-native-gesture-handler/jestSetup';
-
 import { NativeModules } from 'react-native';
 
-// RNGestureHandlerModule이 없는 경우 mock으로 제공
-NativeModules.RNGestureHandlerModule = {
-  State: {},
-  attachGestureHandler: jest.fn(),
-  createGestureHandler: jest.fn(),
-  dropGestureHandler: jest.fn(),
-  updateGestureHandler: jest.fn(),
+// PushNotificationIOS 네이티브 모듈 Mock
+NativeModules.PushNotificationIOS = {
+  addEventListener: jest.fn(),
+  requestPermissions: jest.fn(),
+  checkPermissions: jest.fn((cb) => cb({ alert: true, badge: true, sound: true })),
+  removeEventListener: jest.fn(),
+  presentLocalNotification: jest.fn(),
+  scheduleLocalNotification: jest.fn(),
+  cancelAllLocalNotifications: jest.fn(),
+  getDeliveredNotifications: jest.fn((cb) => cb([])),
+  removeAllDeliveredNotifications: jest.fn(),
+  removeDeliveredNotifications: jest.fn(),
 };
 
-// 필요한 경우 다른 모듈들도 mock할 수 있음
-// 예: reanimated, push-notification 등의 mock이 필요하다면 여기 추가
+// @react-native-community/push-notification-ios Mock
+jest.mock('@react-native-community/push-notification-ios', () => ({
+  addEventListener: jest.fn(),
+  requestPermissions: jest.fn(),
+  checkPermissions: jest.fn((cb) => cb({ alert: true, badge: true, sound: true })),
+  removeEventListener: jest.fn(),
+  presentLocalNotification: jest.fn(),
+  scheduleLocalNotification: jest.fn(),
+  cancelAllLocalNotifications: jest.fn(),
+  getDeliveredNotifications: jest.fn((cb) => cb([])),
+  removeAllDeliveredNotifications: jest.fn(),
+  removeDeliveredNotifications: jest.fn(),
+}));
+
+// react-native-push-notification Mock
+jest.mock('react-native-push-notification', () => ({
+  configure: jest.fn(),
+  localNotification: jest.fn(),
+  cancelAllLocalNotifications: jest.fn(),
+  createChannel: jest.fn((_, cb) => cb && cb()),
+  localNotificationSchedule: jest.fn(),
+  requestPermissions: jest.fn(),
+  checkPermissions: jest.fn((cb) => cb({ alert: true, badge: true, sound: true })),
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+}));
