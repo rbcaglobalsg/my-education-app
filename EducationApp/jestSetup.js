@@ -55,5 +55,9 @@ jest.mock('react-native-reanimated', () => {
   return Reanimated;
 });
 
-// NativeAnimatedHelper mock
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+// NativeAnimatedHelper mock (시도 1: .js 확장자)
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper.js', () => {
+  return {
+    now: jest.fn(),
+  };
+});
