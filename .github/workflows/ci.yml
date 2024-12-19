@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       # Node.js 설정: 프론트엔드/백엔드 모두 Node 기반이므로 Node 설치
       - name: Use Node.js
