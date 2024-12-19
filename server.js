@@ -17,6 +17,11 @@ const SECRET_KEY = process.env.SECRET_KEY;
 app.use(bodyParser.json());
 app.use(cors());
 
+// 루트 경로 처리
+app.get('/', (req, res) => {
+    res.send('Welcome to my education app!');
+});
+
 // 회원가입
 app.post('/api/signup', async (req, res) => {
     const { name, email, password, role, interests = [], expertise = [] } = req.body;
@@ -35,7 +40,7 @@ app.post('/api/signup', async (req, res) => {
         const userData = {
             Name: name,
             Email: email,
-            Password: hashedPassword, // 비밀번호 해시 적용
+            Password: hashedPassword,
             Role: role
         };
 
@@ -139,7 +144,7 @@ app.put('/api/userinfo', (req, res) => {
     });
 });
 
-// 검색 (interests or expertise 기반)
+// 검색
 app.get('/api/search', (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ error: 'No token provided' });
@@ -343,61 +348,11 @@ app.delete('/api/teacher/availability/:slotId', (req, res) => {
     });
 });
 
-// 특정 요일에 가능한 슬롯과 강사 조회
-app.get('/api/availability', async (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ error: 'No token provided' });
-
-    const token = authHeader.split(' ')[1];
-    jwt.verify(token, SECRET_KEY, async (err) => {
-        if (err) return res.status(401).json({ error: 'Invalid token' });
-
-        const { dayOfWeek } = req.query;
-        if (!dayOfWeek) return res.status(400).json({error:'Missing dayOfWeek'});
-
-        try {
-            const records = await base('TeacherAvailability').select({
-                filterByFormula: `{DayOfWeek} = '${dayOfWeek}'`
-            }).all();
-
-            const teacherIds = records.map(r => r.get('TeacherId'));
-            const uniqueTeacherIds = [...new Set(teacherIds)];
-
-            const users = [];
-            for (const tId of uniqueTeacherIds) {
-                try {
-                    const userRec = await base('Users').find(tId);
-                    users.push({
-                        id: userRec.id,
-                        name: userRec.get('Name') || '',
-                        role: userRec.get('Role') || '',
-                        interests: userRec.get('Interests') || '',
-                        expertise: userRec.get('Expertise') || ''
-                    });
-                } catch (e) {
-                    console.log('User not found:', tId);
-                }
-            }
-
-            const slots = records.map(r => ({
-                id: r.id,
-                teacherId: r.get('TeacherId'),
-                dayOfWeek: r.get('DayOfWeek'),
-                time: r.get('Time'),
-                duration: r.get('Duration'),
-                price: r.get('Price'),
-                status: r.get('Status')
-            }));
-
-            res.json({ slots, teachers: users });
-        } catch (error) {
-            console.error('Error fetching availability:', error);
-            res.status(500).json({error:'Server error'});
-        }
-    });
+// 루트 경로 추가 (새로 추가된 부분)
+app.get('/', (req, res) => {
+    res.send('Welcome to my education app!');
 });
 
-// 포트를 process.env.PORT로 변경
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
