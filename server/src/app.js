@@ -15,8 +15,9 @@ app.use(morgan('dev'));
 
 app.use('/api', authRouter);
 
-app.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-});
+// 여기서 app.listen() 제거
+// app.listen(PORT, () => {
+//   console.log(`Backend server running on port ${PORT}`);
+// });
 
-module.exports = app;
+module.exports = app; // app만 export
