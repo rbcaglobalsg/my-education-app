@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest"
+    "test": "npx jest"
   },
   "keywords": [],
   "author": "",

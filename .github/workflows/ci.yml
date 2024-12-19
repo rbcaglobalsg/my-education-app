@@ -16,15 +16,15 @@ jobs:
           fetch-depth: 0
 
       # Node.js 설정: 프론트엔드/백엔드 모두 Node 기반이므로 Node 설치
-      - name: Use Node.js
+      - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       # 백엔드 테스트
       - name: Install backend dependencies
         working-directory: ./server
-        run: npm install
+        run: npm ci
 
       - name: Test backend
         working-directory: ./server
