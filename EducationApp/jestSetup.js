@@ -1,32 +1,17 @@
 // EducationApp/jestSetup.js
 
+import 'react-native-gesture-handler/jestSetup';
+
 import { NativeModules } from 'react-native';
 
-// 기본적으로 PushNotificationIOS 네이티브 모듈 mocking
-NativeModules.PushNotificationIOS = {
-  addEventListener: jest.fn(),
-  requestPermissions: jest.fn(),
-  checkPermissions: jest.fn(),
-  removeEventListener: jest.fn(),
-  presentLocalNotification: jest.fn(),
-  scheduleLocalNotification: jest.fn(),
-  cancelAllLocalNotifications: jest.fn(),
-  getDeliveredNotifications: jest.fn((callback) => callback([])),
-  removeAllDeliveredNotifications: jest.fn(),
-  removeDeliveredNotifications: jest.fn(),
+// RNGestureHandlerModule이 없는 경우 mock으로 제공
+NativeModules.RNGestureHandlerModule = {
+  State: {},
+  attachGestureHandler: jest.fn(),
+  createGestureHandler: jest.fn(),
+  dropGestureHandler: jest.fn(),
+  updateGestureHandler: jest.fn(),
 };
 
-// react-native-push-notification 모듈도 모킹
-jest.mock('react-native-push-notification', () => {
-  return {
-    configure: jest.fn(),
-    localNotification: jest.fn(),
-    cancelAllLocalNotifications: jest.fn(),
-    createChannel: jest.fn((_, cb) => cb && cb()),
-    localNotificationSchedule: jest.fn(),
-    requestPermissions: jest.fn(),
-    checkPermissions: jest.fn((cb) => cb({ alert: true, badge: true, sound: true })),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-  };
-});
+// 필요한 경우 다른 모듈들도 mock할 수 있음
+// 예: reanimated, push-notification 등의 mock이 필요하다면 여기 추가

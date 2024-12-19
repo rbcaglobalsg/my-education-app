@@ -3,7 +3,7 @@ module.exports = {
   preset: 'react-native',
   setupFilesAfterEnv: ['./jestSetup.js'],
   transformIgnorePatterns: [
-    'node_modules/(?!react-native|react-native-gesture-handler|@react-native|@react-navigation)',
+    'node_modules/(?!((jest-)?react-native|react-native|@react-native|react-navigation|react-native-gesture-handler))'
   ],
   moduleNameMapper: {
     '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'
