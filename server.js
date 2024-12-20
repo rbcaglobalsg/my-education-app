@@ -10,14 +10,14 @@ const app = express();
 
 const SALT_ROUNDS = 10;
 
-// Airtable 설정: 환경 변수에서 API Key, Base ID, Secret Key 읽기
+// Airtable 설정
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 const SECRET_KEY = process.env.SECRET_KEY;
 
 app.use(bodyParser.json());
 app.use(cors());
 
-// 루트 경로 처리
+// 루트 경로
 app.get('/', (req, res) => {
     res.send('Welcome to my education app!');
 });
@@ -254,7 +254,7 @@ app.get('/api/schedule', (req, res) => {
     });
 });
 
-// 강사 가용시간(요일 기반)
+// 강사 가용시간 관리
 app.post('/api/teacher/availability', (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ error: 'No token provided' });
@@ -348,9 +348,39 @@ app.delete('/api/teacher/availability/:slotId', (req, res) => {
     });
 });
 
-// 루트 경로 추가 (새로 추가된 부분)
-app.get('/', (req, res) => {
-    res.send('Welcome to my education app!');
+// 새로 추가하는 /api/availability GET 라우트
+app.get('/api/availability', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'No token provided' });
+
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, SECRET_KEY, async (err) => {
+        if (err) return res.status(401).json({ error: 'Invalid token' });
+
+        const { dayOfWeek } = req.query;
+        if (!dayOfWeek) return res.status(400).json({ error: 'Missing dayOfWeek' });
+
+        try {
+            const records = await base('TeacherAvailability').select({
+                filterByFormula: `{DayOfWeek} = '${dayOfWeek}'`
+            }).all();
+
+            const slots = records.map(r => ({
+                id: r.id,
+                teacherId: r.get('TeacherId'),
+                dayOfWeek: r.get('DayOfWeek'),
+                time: r.get('Time'),
+                duration: r.get('Duration'),
+                price: r.get('Price'),
+                status: r.get('Status')
+            }));
+
+            res.json({ slots });
+        } catch (error) {
+            console.error('Error fetching availability:', error);
+            res.status(500).json({ error: 'Server error' });
+        }
+    });
 });
 
 const PORT = process.env.PORT || 3000;
