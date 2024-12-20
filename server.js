@@ -254,7 +254,7 @@ app.get('/api/schedule', (req, res) => {
     });
 });
 
-// 강사 가용시간 관리
+// 강사 가용시간 등록
 app.post('/api/teacher/availability', (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ error: 'No token provided' });
@@ -285,6 +285,7 @@ app.post('/api/teacher/availability', (req, res) => {
     });
 });
 
+// 강사 가용시간 조회
 app.get('/api/teacher/availability', (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ error: 'No token provided' });
@@ -319,6 +320,7 @@ app.get('/api/teacher/availability', (req, res) => {
     });
 });
 
+// 강사 가용시간 삭제
 app.delete('/api/teacher/availability/:slotId', (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ error: 'No token provided' });
@@ -348,22 +350,24 @@ app.delete('/api/teacher/availability/:slotId', (req, res) => {
     });
 });
 
-// 새로 추가하는 /api/availability GET 라우트
+// **새로 추가하는 /api/availability 엔드포인트**
 app.get('/api/availability', (req, res) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ error: 'No token provided' });
+    if(!authHeader) return res.status(401).json({ error: 'No token provided' });
 
     const token = authHeader.split(' ')[1];
-    jwt.verify(token, SECRET_KEY, async (err) => {
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
         if (err) return res.status(401).json({ error: 'Invalid token' });
 
         const { dayOfWeek } = req.query;
-        if (!dayOfWeek) return res.status(400).json({ error: 'Missing dayOfWeek' });
+        if (!dayOfWeek) {
+            return res.status(400).json({ error: 'Missing dayOfWeek query parameter' });
+        }
 
         try {
-            const records = await base('TeacherAvailability').select({
-                filterByFormula: `{DayOfWeek} = '${dayOfWeek}'`
-            }).all();
+            const records = await base('TeacherAvailability')
+                .select({ filterByFormula: `{DayOfWeek} = '${dayOfWeek}'` })
+                .all();
 
             const slots = records.map(r => ({
                 id: r.id,
@@ -375,7 +379,27 @@ app.get('/api/availability', (req, res) => {
                 status: r.get('Status')
             }));
 
-            res.json({ slots });
+            const teacherIds = Array.from(new Set(slots.map(s => s.teacherId)));
+            const teachers = [];
+
+            for (const tId of teacherIds) {
+                try {
+                    const userRec = await base('Users').find(tId);
+                    teachers.push({
+                        id: userRec.id,
+                        name: userRec.get('Name') || '',
+                        email: userRec.get('Email') || '',
+                        role: userRec.get('Role') || '',
+                        interests: userRec.get('Interests') || '',
+                        expertise: userRec.get('Expertise') || ''
+                    });
+                } catch (e) {
+                    console.log(`User not found for id: ${tId}`, e);
+                }
+            }
+
+            // 항상 slots와 teachers를 반환
+            res.json({ slots: slots || [], teachers: teachers || [] });
         } catch (error) {
             console.error('Error fetching availability:', error);
             res.status(500).json({ error: 'Server error' });
