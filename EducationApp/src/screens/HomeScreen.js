@@ -1,249 +1,216 @@
-// HomeScreen.js
+// C:\Users\marcu\education_app\EducationApp\src\screens\HomeScreen.js
 import React from 'react';
-import { View, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Text, TextInput, Button, Avatar, Card } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 
-// 브랜드 컬러 및 스타일 관련 상수
 const BRAND_COLOR = '#00B894';
-const LIGHT_BG = '#F9F9F9';
 
-const categories = [
-  {name:'All', icon:'apps'},
-  {name:'Moving/Cleaning', icon:'truck'},
-  {name:'Install/Repair', icon:'wrench'},
-  {name:'Interior', icon:'sofa'},
-  {name:'Business', icon:'briefcase-outline'},
-  {name:'Tutoring', icon:'school-outline'},
-  {name:'Hobby', icon:'palette-outline'},
-  {name:'Automotive', icon:'car-outline'},
-  {name:'Legal/Finance', icon:'balance-scale'},
-];
-
-const mainMenus = [
-  {name:'Find Pros', icon:'account-search-outline'},
-  {name:'Community', icon:'forum-outline'},
-  {name:'Market', icon:'cart-outline'},
-  {name:'Portfolio', icon:'folder-image'},
-];
-
-const popularServices = [
-  {title:'Piano Lessons', image:'https://via.placeholder.com/150x100.png?text=Piano'},
-  {title:'Guitar Lessons', image:'https://via.placeholder.com/150x100.png?text=Guitar'},
-  {title:'Math Tutoring', image:'https://via.placeholder.com/150x100.png?text=Math'},
-  {title:'English Speaking', image:'https://via.placeholder.com/150x100.png?text=English'},
-];
-
-export default function HomeScreen() {
-  const [searchQuery, setSearchQuery] = React.useState('');
-
-  return (
-    <View style={styles.container}>
-      {/* 상단 헤더 영역 (그라데이션 배경) */}
-      <LinearGradient colors={[BRAND_COLOR, '#00C4A9']} style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={{flex:1}}>
-            <Text style={styles.logoText}>bzla</Text>
-            <Text style={styles.tagline}>Find the best experts for your needs</Text>
-          </View>
-          <View style={styles.headerRight}>
-            <MaterialCommunityIcons name="account-circle-outline" size={28} color="#fff" style={{marginRight:10}}/>
-            <Button mode="contained" onPress={()=>{}} style={styles.proBtn} labelStyle={{fontSize:14,color:'#00B894'}} buttonColor="#fff">Become a Pro</Button>
-          </View>
+// 상단바 스타일링
+const TopBar = () => {
+    return (
+        <View style={styles.topBarContainer}>
+            <Text style={styles.appName}>bzla</Text>
+            <TouchableOpacity>
+                <Avatar.Image size={40} source={{ uri: 'https://via.placeholder.com/40' }} />
+            </TouchableOpacity>
         </View>
+    );
+};
+
+// 검색바
+const SearchBar = () => {
+    return (
         <View style={styles.searchContainer}>
-          <TextInput
-            mode="outlined"
-            placeholder="What service are you looking for?"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            style={styles.searchInput}
-            outlineColor="#fff"
-            activeOutlineColor="#fff"
-            textColor="#333"
-            placeholderTextColor="#999"
-            right={<TextInput.Icon name="magnify" color="#333"/>}
-          />
-        </View>
-      </LinearGradient>
-
-      <ScrollView style={{flex:1, backgroundColor:LIGHT_BG}} contentContainerStyle={{paddingBottom:80}}>
-        
-        {/* 카테고리 리스트 */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-          {categories.map((c,i)=>(
-            <TouchableOpacity key={i} style={styles.catItem}>
-              <View style={styles.catIconWrapper}>
-                <MaterialCommunityIcons name={c.icon} size={22} color={BRAND_COLOR}/>
-              </View>
-              <Text style={styles.catLabel}>{c.name}</Text>
+            <MaterialCommunityIcons name="magnify" size={24} color="#999" />
+            <TextInput
+                placeholder="어떤 서비스를 찾으시나요?"
+                style={styles.searchInput}
+                underlineColorAndroid="transparent"
+                mode="flat"
+            />
+            <TouchableOpacity>
+                <MaterialCommunityIcons name="microphone" size={24} color="#999" />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+        </View>
+    );
+};
 
-        {/* 메인 배너 */}
-        <Card style={styles.bannerCard}>
-          <Image source={{uri:'https://via.placeholder.com/600x200.png?text=Featured+Service'}} style={styles.bannerImage}/>
+// 카테고리 아이콘 버튼
+const CategoryItem = ({ iconName, title }) => {
+    return (
+        <TouchableOpacity style={styles.categoryItem}>
+            <View style={styles.categoryIconWrapper}>
+                <MaterialCommunityIcons name={iconName} size={24} color={BRAND_COLOR} />
+            </View>
+            <Text style={styles.categoryText}>{title}</Text>
+        </TouchableOpacity>
+    );
+};
+
+// 카테고리 리스트
+const CategoryList = () => {
+    const categories = [
+        { iconName: 'home', title: '홈' },
+        { iconName: 'account', title: '강사찾기' },
+        { iconName: 'book', title: '과외' },
+        { iconName: 'guitar-acoustic', title: '악기레슨' },
+        { iconName: 'car', title: '운전' },
+        { iconName: 'heart', title: '헬스/요가' },
+        { iconName: 'brush', title: '미술/디자인' },
+    ];
+
+    return (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryList}>
+            {categories.map((cat, idx) => (
+                <CategoryItem key={idx} iconName={cat.iconName} title={cat.title} />
+            ))}
+        </ScrollView>
+    );
+};
+
+// 인기 서비스 카드
+const ServiceCard = ({ title, imageUri }) => {
+    return (
+        <Card style={styles.serviceCard}>
+            <Card.Cover source={{ uri: imageUri }} style={{ height: 100 }} />
+            <Card.Title title={title} titleStyle={{ fontSize: 14 }} />
         </Card>
+    );
+};
 
-        {/* 주요 기능 메뉴 */}
-        <View style={styles.mainMenuContainer}>
-          {mainMenus.map((m,i)=>(
-            <TouchableOpacity key={i} style={styles.mainMenuItem}>
-              <Avatar.Icon icon={m.icon} size={48} color={BRAND_COLOR} style={styles.mainMenuIcon}/>
-              <Text style={styles.mainMenuText}>{m.name}</Text>
-            </TouchableOpacity>
-          ))}
+// 인기 서비스 섹션
+const PopularServices = () => {
+    const services = [
+        { title: '피아노 레슨', imageUri: 'https://via.placeholder.com/150' },
+        { title: '특허 상담', imageUri: 'https://via.placeholder.com/150' },
+        { title: 'DIY 목공', imageUri: 'https://via.placeholder.com/150' },
+    ];
+
+    return (
+        <View style={styles.popularContainer}>
+            <Text style={styles.sectionTitle}>인기 서비스</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {services.map((srv, idx) => (
+                    <ServiceCard key={idx} title={srv.title} imageUri={srv.imageUri} />
+                ))}
+            </ScrollView>
         </View>
+    );
+};
 
-        {/* 인기 서비스 */}
-        <Text style={styles.sectionTitle}>Popular Services</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginBottom:10, paddingLeft:10}}>
-          {popularServices.map((s,i)=>(
-            <Card key={i} style={styles.serviceCard}>
-              <Image source={{uri:s.image}} style={styles.serviceImage}/>
-              <Card.Content>
-                <Text style={styles.serviceTitle}>{s.title}</Text>
-              </Card.Content>
-            </Card>
-          ))}
-        </ScrollView>
-
-        {/* 로그인 유도 영역 */}
-        <View style={styles.loginPrompt}>
-          <Text style={{flex:1,fontSize:14,color:'#333'}}>Login to access more features and personalized recommendations</Text>
-          <Button mode="text" onPress={()=>{}} textColor={BRAND_COLOR}>Login</Button>
+// 로그인 유도 섹션
+const LoginPrompt = ({ navigation }) => {
+    return (
+        <View style={styles.loginPromptContainer}>
+            <Text style={styles.loginPromptText}>로그인하고 더 많은 기능을 이용해보세요</Text>
+            <Button mode="outlined" onPress={() => navigation.navigate('Login')} style={styles.loginButton}>
+                로그인
+            </Button>
         </View>
-      </ScrollView>
-    </View>
-  );
-}
+    );
+};
+
+const HomeScreen = ({ navigation }) => {
+    return (
+        <LinearGradient colors={['#ffffff', '#f4f4f9']} style={styles.container}>
+            <ScrollView>
+                <TopBar />
+                <SearchBar />
+                <CategoryList />
+                <PopularServices />
+                <LoginPrompt navigation={navigation} />
+            </ScrollView>
+        </LinearGradient>
+    );
+};
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1, backgroundColor:LIGHT_BG
-  },
-  header:{
-    paddingTop:50,
-    paddingBottom:20,
-    paddingHorizontal:10,
-  },
-  headerContent:{
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'space-between'
-  },
-  logoText:{
-    fontSize:28,
-    fontWeight:'bold',
-    color:'#fff',
-    letterSpacing:-1
-  },
-  tagline:{
-    fontSize:12,
-    color:'#e0f7f3',
-    marginTop:2
-  },
-  headerRight:{
-    flexDirection:'row',
-    alignItems:'center'
-  },
-  proBtn:{
-    height:36,
-    justifyContent:'center',
-    borderRadius:18,
-    paddingHorizontal:15
-  },
-  searchContainer:{
-    marginTop:10
-  },
-  searchInput:{
-    height:40,
-    fontSize:14,
-    backgroundColor:'#fff',
-    borderRadius:5
-  },
-  categoryScroll:{
-    marginVertical:15,
-    paddingLeft:10
-  },
-  catItem:{
-    alignItems:'center',
-    marginRight:15
-  },
-  catIconWrapper:{
-    width:50,
-    height:50,
-    borderRadius:25,
-    backgroundColor:'#EFFAF7',
-    justifyContent:'center',
-    alignItems:'center',
-    marginBottom:5
-  },
-  catLabel:{
-    fontSize:12,
-    color:'#333'
-  },
-  bannerCard:{
-    marginHorizontal:10,
-    borderRadius:10,
-    overflow:'hidden',
-    marginBottom:20
-  },
-  bannerImage:{
-    width:'100%',
-    height:150,
-    resizeMode:'cover'
-  },
-  mainMenuContainer:{
-    flexDirection:'row',
-    justifyContent:'space-around',
-    marginVertical:20
-  },
-  mainMenuItem:{
-    alignItems:'center',
-    width:70
-  },
-  mainMenuIcon:{
-    backgroundColor:'#DFF6F2'
-  },
-  mainMenuText:{
-    marginTop:5,
-    fontSize:12,
-    color:'#333',
-    textAlign:'center'
-  },
-  sectionTitle:{
-    margin:10,
-    fontWeight:'bold',
-    fontSize:16,
-    color:'#333'
-  },
-  serviceCard:{
-    width:150,
-    marginRight:10,
-    borderRadius:10,
-    overflow:'hidden',
-    backgroundColor:'#fff',
-    elevation:2
-  },
-  serviceImage:{
-    width:'100%',
-    height:100,
-    resizeMode:'cover'
-  },
-  serviceTitle:{
-    fontSize:14,
-    color:'#333'
-  },
-  loginPrompt:{
-    flexDirection:'row',
-    alignItems:'center',
-    backgroundColor:'#FFF',
-    padding:10,
-    margin:10,
-    borderRadius:10,
-    elevation:1
-  }
+    container: {
+        flex: 1,
+        paddingTop: 40,
+    },
+    topBarContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        marginBottom: 10,
+    },
+    appName: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: BRAND_COLOR,
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        marginHorizontal: 20,
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    searchInput: {
+        flex: 1,
+        marginHorizontal: 10,
+        paddingVertical: 0,
+        fontSize: 16,
+    },
+    categoryList: {
+        marginHorizontal: 20,
+        marginBottom: 20,
+    },
+    categoryItem: {
+        alignItems: 'center',
+        marginRight: 15,
+    },
+    categoryIconWrapper: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: '#e6f7f2',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 5,
+    },
+    categoryText: {
+        fontSize: 12,
+        color: '#333',
+    },
+    popularContainer: {
+        marginHorizontal: 20,
+        marginBottom: 20,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 10,
+    },
+    serviceCard: {
+        width: 120,
+        marginRight: 10,
+    },
+    loginPromptContainer: {
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 8,
+        marginHorizontal: 20,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        marginBottom: 40,
+        alignItems: 'center',
+    },
+    loginPromptText: {
+        fontSize: 14,
+        marginBottom: 10,
+    },
+    loginButton: {
+        borderColor: BRAND_COLOR,
+    }
 });
+
+export default HomeScreen;
