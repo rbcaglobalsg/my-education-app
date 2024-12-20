@@ -105,8 +105,12 @@ global.cancelAnimationFrame = (id) => clearTimeout(id);
 
 // Polyfill for setImmediate in jsdom environment
 if (typeof setImmediate === 'undefined') {
-    global.setImmediate = (fn, ...args) => {
-      return global.setTimeout(fn, 0, ...args);
-    };
-  }
+  global.setImmediate = (fn, ...args) => {
+    return global.setTimeout(fn, 0, ...args);
+  };
+}
   
+// requestAnimationFrame polyfill
+if (typeof requestAnimationFrame === 'undefined') {
+  global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+}
