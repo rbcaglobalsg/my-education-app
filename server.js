@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 // 회원가입
 app.post('/api/signup', async (req, res) => {
-    const { name, email, password, role, interests = [], expertise = [] } = req.body;
+    const { name, email, password, role, interests = [], expertise = [], bio = '', profileImage = '' } = req.body;
     if (!name || !email || !password || !role) {
         return res.status(400).json({ error: 'Missing required fields (name, email, password, role)' });
     }
@@ -41,7 +41,9 @@ app.post('/api/signup', async (req, res) => {
             Name: name,
             Email: email,
             Password: hashedPassword,
-            Role: role
+            Role: role,
+            Bio: bio,
+            ProfileImageURL: profileImage
         };
 
         if (role === 'learn') {
@@ -113,7 +115,9 @@ app.get('/api/userinfo', (req, res) => {
                 email: user.Email || '',
                 role: user.Role || '',
                 Interests: user.Interests || '',
-                Expertise: user.Expertise || ''
+                Expertise: user.Expertise || '',
+                bio: user.Bio || '',
+                profileImage: user.ProfileImageURL || ''
             });
         });
     });
@@ -128,13 +132,16 @@ app.put('/api/userinfo', (req, res) => {
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) return res.status(401).json({ error: 'Invalid token' });
 
-        const { name, interests, expertise } = req.body;
+        const { name, interests, expertise, bio, profileImage } = req.body;
 
-        base('Users').update(decoded.id, {
-            Name: name,
-            Interests: (interests || []).join(', '),
-            Expertise: (expertise || []).join(', ')
-        }, (err) => {
+        const updateFields = {};
+        if (name !== undefined) updateFields.Name = name;
+        if (interests !== undefined) updateFields.Interests = (interests || []).join(', ');
+        if (expertise !== undefined) updateFields.Expertise = (expertise || []).join(', ');
+        if (bio !== undefined) updateFields.Bio = bio;
+        if (profileImage !== undefined) updateFields.ProfileImageURL = profileImage;
+
+        base('Users').update(decoded.id, updateFields, (err) => {
             if (err) {
                 console.error(err);
                 return res.status(500).json({ error: 'Failed to update user info' });
@@ -180,7 +187,9 @@ app.get('/api/search', (req, res) => {
                         email: f.Email || '',
                         role: f.Role || '',
                         interests: f.Interests || '',
-                        expertise: f.Expertise || ''
+                        expertise: f.Expertise || '',
+                        bio: f.Bio || '',
+                        profileImage: f.ProfileImageURL || ''
                     };
                 });
 
@@ -350,13 +359,13 @@ app.delete('/api/teacher/availability/:slotId', (req, res) => {
     });
 });
 
-// **새로 추가하는 /api/availability 엔드포인트**
-app.get('/api/availability', (req, res) => {
+// 새로 추가한 /api/availability
+app.get('/api/availability', async (req, res) => {
     const authHeader = req.headers.authorization;
     if(!authHeader) return res.status(401).json({ error: 'No token provided' });
 
     const token = authHeader.split(' ')[1];
-    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+    jwt.verify(token, SECRET_KEY, async (err) => {
         if (err) return res.status(401).json({ error: 'Invalid token' });
 
         const { dayOfWeek } = req.query;
@@ -391,14 +400,15 @@ app.get('/api/availability', (req, res) => {
                         email: userRec.get('Email') || '',
                         role: userRec.get('Role') || '',
                         interests: userRec.get('Interests') || '',
-                        expertise: userRec.get('Expertise') || ''
+                        expertise: userRec.get('Expertise') || '',
+                        bio: userRec.get('Bio') || '',
+                        profileImage: userRec.get('ProfileImageURL') || ''
                     });
                 } catch (e) {
                     console.log(`User not found for id: ${tId}`, e);
                 }
             }
 
-            // 항상 slots와 teachers를 반환
             res.json({ slots: slots || [], teachers: teachers || [] });
         } catch (error) {
             console.error('Error fetching availability:', error);

@@ -1,6 +1,6 @@
 // src/screens/SearchScreen.js
 import React, { useState } from 'react';
-import { View, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { View, StyleSheet, Alert, ActivityIndicator, ScrollView, Image, TouchableOpacity, Modal } from 'react-native';
 import { Text, TextInput, Button, List } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,6 +12,8 @@ const SearchScreen = () => {
     const [loading, setLoading] = useState(false);
     const [slots, setSlots] = useState([]);
     const [teachers, setTeachers] = useState([]);
+    const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const handleSearch = async () => {
         if (!keyword.trim()) {
@@ -28,7 +30,6 @@ const SearchScreen = () => {
         }
 
         try {
-            // dayOfWeek 기반으로 slot/teacher 조회
             const response = await fetch(`https://bzla.ai/api/availability?dayOfWeek=${encodeURIComponent(dayOfWeek)}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -40,10 +41,8 @@ const SearchScreen = () => {
             }
 
             const data = await response.json();
-            // data = { slots: [...], teachers: [...] }
             const interestLower = keyword.toLowerCase();
 
-            // 키워드를 teacher의 interests나 expertise에서 찾는다.
             const filteredTeachers = data.teachers.filter(t => {
                 const tInterests = (t.interests || '').toLowerCase();
                 const tExpertise = (t.expertise || '').toLowerCase();
@@ -51,7 +50,6 @@ const SearchScreen = () => {
             });
 
             const filteredTeacherIds = filteredTeachers.map(t => t.id);
-
             const filteredSlots = data.slots.filter(s => filteredTeacherIds.includes(s.teacherId));
 
             setTeachers(filteredTeachers);
@@ -67,6 +65,15 @@ const SearchScreen = () => {
     const getTeacherName = (teacherId) => {
         const t = teachers.find(t=>t.id === teacherId);
         return t ? t.name : 'Unknown Teacher';
+    };
+
+    const getTeacherInfo = (teacherId) => {
+        return teachers.find(t => t.id === teacherId);
+    };
+
+    const openTeacherDetail = (teacher) => {
+        setSelectedTeacher(teacher);
+        setModalVisible(true);
     };
 
     return (
@@ -104,28 +111,61 @@ const SearchScreen = () => {
                 <View style={{ marginTop: 20, width: '100%' }}>
                     <Text variant="titleLarge" style={{ marginBottom:10 }}>Results:</Text>
                     {teachers.map(t => (
-                        <List.Item
-                            key={t.id}
-                            title={t.name}
-                            description={`Email: ${t.email}\nRole: ${t.role}\nInterests: ${t.interests}\nExpertise: ${t.expertise}`}
-                            left={props => <List.Icon {...props} icon="account" />}
-                        />
+                        <TouchableOpacity key={t.id} onPress={() => openTeacherDetail(t)}>
+                            <List.Item
+                                title={t.name}
+                                description={`Email: ${t.email}\nRole: ${t.role}\nInterests: ${t.interests}\nExpertise: ${t.expertise}`}
+                                left={props => t.profileImage ? <Image source={{uri: t.profileImage}} style={{width:50,height:50,borderRadius:25}}/> : <List.Icon {...props} icon="account" />}
+                            />
+                        </TouchableOpacity>
                     ))}
 
-                    {slots.map(s => (
-                        <List.Item
-                            key={s.id}
-                            title={`${getTeacherName(s.teacherId)} - ${s.dayOfWeek} at ${s.time}`}
-                            description={`Duration: ${s.duration} min, Price: $${s.price}, Status: ${s.status}`}
-                            left={props => <List.Icon {...props} icon="calendar-clock" />}
-                        />
-                    ))}
+                    {slots.map(s => {
+                        const teacher = getTeacherInfo(s.teacherId);
+                        const teacherName = teacher ? teacher.name : 'Unknown';
+                        return (
+                            <TouchableOpacity key={s.id} onPress={() => teacher && openTeacherDetail(teacher)}>
+                                <List.Item
+                                    title={`${teacherName} - ${s.dayOfWeek} at ${s.time}`}
+                                    description={`Duration: ${s.duration} min, Price: $${s.price}, Status: ${s.status}`}
+                                    left={props => teacher && teacher.profileImage ? <Image source={{uri: teacher.profileImage}} style={{width:50,height:50,borderRadius:25}}/> : <List.Icon {...props} icon="calendar-clock" />}
+                                />
+                            </TouchableOpacity>
+                        );
+                    })}
                 </View>
             )}
 
             {!loading && teachers.length === 0 && slots.length === 0 && (
                 <Text style={{ marginTop: 20 }}>No results. Try another keyword or day.</Text>
             )}
+
+            <Modal
+                visible={modalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        {selectedTeacher && (
+                            <>
+                                {selectedTeacher.profileImage ? (
+                                    <Image source={{uri: selectedTeacher.profileImage}} style={{width:100,height:100,borderRadius:50,marginBottom:10}}/>
+                                ) : null}
+                                <Text variant="headlineSmall">{selectedTeacher.name}</Text>
+                                <Text>{selectedTeacher.email}</Text>
+                                <Text>Role: {selectedTeacher.role}</Text>
+                                <Text>Interests: {selectedTeacher.interests}</Text>
+                                <Text>Expertise: {selectedTeacher.expertise}</Text>
+                                <Text style={{marginTop:10}}>{selectedTeacher.bio}</Text>
+
+                                <Button mode="contained" onPress={() => setModalVisible(false)} style={{marginTop:15}}>Close</Button>
+                            </>
+                        )}
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
     );
 };
@@ -135,6 +175,19 @@ const styles = StyleSheet.create({
     title: { textAlign: 'center', marginBottom: 20 },
     input: { marginBottom: 15 },
     button: { marginBottom: 15 },
+    modalContainer: {
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor:'rgba(0,0,0,0.5)'
+    },
+    modalContent: {
+        width:'80%',
+        backgroundColor:'#fff',
+        padding:20,
+        borderRadius:10,
+        alignItems:'center'
+    }
 });
 
 export default SearchScreen;
