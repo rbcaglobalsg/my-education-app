@@ -40,7 +40,7 @@ const DashboardScreen = ({ navigation }) => {
             const now = new Date();
             sessions.forEach(s => {
                 const sessionDateTime = new Date(`${s.date}T${s.time}:00`);
-                const diff = (sessionDateTime - now) / 60000; // 분
+                const diff = (sessionDateTime - now) / 60000; // 분 단위 차이
                 if (diff > 0 && diff <= 10) {
                     showNotification("Upcoming Session", `You have a session starting at ${s.time}`);
                 }
@@ -84,6 +84,11 @@ const DashboardScreen = ({ navigation }) => {
         });
     }, []);
 
+    const handleLogout = async () => {
+        await AsyncStorage.removeItem('token');
+        navigation.replace('Login');
+    };
+
     if (loading) {
         return (
             <View style={styles.container}>
@@ -124,6 +129,11 @@ const DashboardScreen = ({ navigation }) => {
                     Teacher Dashboard
                 </Button>
             )}
+
+            {/* 로그아웃 버튼 추가 */}
+            <Button mode="contained" onPress={handleLogout} style={{ marginTop: 20 }}>
+                Logout
+            </Button>
         </View>
     );
 };

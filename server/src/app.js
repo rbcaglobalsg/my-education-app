@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const { PORT } = require('./config/config');
 
 const authRouter = require('./routes/auth');
+const paymentRouter = require('./routes/payment');
+const availabilityRouter = require('./routes/availability'); // 추가한 부분
 
 const app = express();
 app.use(express.json());
@@ -14,10 +16,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 app.use('/api', authRouter);
+app.use('/api/payment', paymentRouter);
+app.use('/api', availabilityRouter); // availability 라우터 등록
 
-// 여기서 app.listen() 제거
-// app.listen(PORT, () => {
-//   console.log(`Backend server running on port ${PORT}`);
-// });
-
-module.exports = app; // app만 export
+module.exports = app;

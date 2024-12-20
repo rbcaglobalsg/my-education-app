@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-const TeacherDashboardScreen = () => {
+const TeacherDashboardScreen = ({ navigation }) => {
     const [dayOfWeek, setDayOfWeek] = useState('Monday');
     const [time, setTime] = useState('10:00');
     const [duration, setDuration] = useState('60');
@@ -58,7 +58,7 @@ const TeacherDashboardScreen = () => {
         }
 
         try {
-            const response = await fetch('http://bzla.ai/api/teacher/availability', {
+            const response = await fetch('https://bzla.ai/api/teacher/availability', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,13 +113,22 @@ const TeacherDashboardScreen = () => {
         setLoading(false);
     };
 
+    const handleLogout = async () => {
+        await AsyncStorage.removeItem('token');
+        navigation.replace('Login');
+    };
+
     useEffect(() => {
         fetchSlots();
     }, []);
 
     return (
         <View style={styles.container}>
-            <Text variant="headlineMedium" style={styles.title}>Teacher Dashboard</Text>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Text variant="headlineMedium" style={styles.title}>Teacher Dashboard</Text>
+                <Button mode="outlined" onPress={handleLogout} style={{margin:5}}>Logout</Button>
+            </View>
+
             <Text variant="titleSmall">Day of Week</Text>
             <View style={{flexDirection:'row',flexWrap:'wrap',marginBottom:15}}>
                 {DAYS.map(d => (
