@@ -1,58 +1,65 @@
-// C:\Users\marcu\education_app\EducationApp\src\i18n.js
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as RNLocalize from 'react-native-localize';
 
-// 번역 리소스 예시
+// 간단한 리소스 예시
+// locales/en/common.json 와 locales/ko/common.json 파일을 준비했다고 가정
 const resources = {
   en: {
-    translation: {
-      welcome: "Welcome to bzla!",
+    common: {
+      appName: "bzla",
       searchPlaceholder: "What service are you looking for?",
-      popularServices: "Popular Services",
       loginPrompt: "Log in to access more features",
-      login: "Log In",
+      login: "Login",
+      popularServices: "Popular Services",
       categories: {
         home: "Home",
-        tutor: "Find Tutor",
-        lesson: "Lessons",
-        drive: "Driving",
+        findTeacher: "Find a Teacher",
+        study: "Study",
+        music: "Music Lessons",
+        driving: "Driving",
         health: "Health/Yoga",
+        art: "Art/Design"
       }
-    }
+    },
   },
   ko: {
-    translation: {
-      welcome: "bzla에 오신 것을 환영합니다!",
+    common: {
+      appName: "bzla",
       searchPlaceholder: "어떤 서비스를 찾으시나요?",
-      popularServices: "인기 서비스",
       loginPrompt: "로그인하고 더 많은 기능을 이용해보세요",
       login: "로그인",
+      popularServices: "인기 서비스",
       categories: {
         home: "홈",
-        tutor: "강사찾기",
-        lesson: "레슨",
-        drive: "운전",
+        findTeacher: "강사찾기",
+        study: "과외",
+        music: "악기레슨",
+        driving: "운전",
         health: "헬스/요가",
+        art: "미술/디자인"
       }
-    }
-  }
+    },
+  },
 };
 
-// 기기 언어 자동 감지
 const fallback = { languageTag: 'en', isRTL: false };
+
 const { languageTag } =
   RNLocalize.findBestAvailableLanguage(Object.keys(resources)) || fallback;
 
 i18n
   .use(initReactI18next)
   .init({
-    resources,
+    compatibilityJSON: 'v3',
     lng: languageTag,
     fallbackLng: 'en',
+    resources,
+    ns: ['common'],
+    defaultNS: 'common',
     interpolation: {
       escapeValue: false
-    }
+    },
   });
 
 export default i18n;

@@ -1,17 +1,17 @@
-// C:\Users\marcu\education_app\EducationApp\src\screens\HomeScreen.js
 import React from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, Avatar, Card } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const BRAND_COLOR = '#00B894';
 const GRADIENT_COLORS = ['#FFFFFF', '#F0F4F8'];
 
-const TopBar = () => {
+const TopBar = ({ t }) => {
     return (
         <View style={styles.topBarContainer}>
-            <Text style={styles.appName}>bzla</Text>
+            <Text style={styles.appName}>{t('appName')}</Text>
             <TouchableOpacity style={styles.avatarWrapper}>
                 <Avatar.Image size={40} source={{ uri: 'https://via.placeholder.com/40' }} />
             </TouchableOpacity>
@@ -19,12 +19,12 @@ const TopBar = () => {
     );
 };
 
-const SearchBar = () => {
+const SearchBar = ({ t }) => {
     return (
         <View style={styles.searchContainer}>
             <MaterialCommunityIcons name="magnify" size={24} color="#666" style={{ marginHorizontal: 5 }} />
             <TextInput
-                placeholder="어떤 서비스를 찾으시나요?"
+                placeholder={t('searchPlaceholder')}
                 style={styles.searchInput}
                 underlineColorAndroid="transparent"
                 mode="flat"
@@ -36,9 +36,9 @@ const SearchBar = () => {
     );
 };
 
-const CategoryItem = ({ iconName, title }) => {
+const CategoryItem = ({ iconName, title, onPress }) => {
     return (
-        <TouchableOpacity style={styles.categoryItem}>
+        <TouchableOpacity style={styles.categoryItem} onPress={onPress}>
             <View style={styles.categoryIconWrapper}>
                 <MaterialCommunityIcons name={iconName} size={24} color={BRAND_COLOR} />
             </View>
@@ -47,21 +47,26 @@ const CategoryItem = ({ iconName, title }) => {
     );
 };
 
-const CategoryList = () => {
+const CategoryList = ({ t, navigation }) => {
     const categories = [
-        { iconName: 'home-outline', title: '홈' },
-        { iconName: 'account-search-outline', title: '강사찾기' },
-        { iconName: 'book-outline', title: '과외' },
-        { iconName: 'guitar-acoustic', title: '악기레슨' },
-        { iconName: 'car-outline', title: '운전' },
-        { iconName: 'heart-outline', title: '헬스/요가' },
-        { iconName: 'brush', title: '미술/디자인' },
+        { iconName: 'home-outline', title: t('categories.home'), route: 'Home' },
+        { iconName: 'account-search-outline', title: t('categories.findTeacher'), route: 'Search' },
+        { iconName: 'book-outline', title: t('categories.study'), route: 'Dashboard' }, // 예: 과외->Dashboard로 가정
+        { iconName: 'guitar-acoustic', title: t('categories.music'), route: 'Search' }, // 예: 악기레슨->Search 재사용
+        { iconName: 'car-outline', title: t('categories.driving'), route: 'Reservations' }, 
+        { iconName: 'heart-outline', title: t('categories.health'), route: 'Schedule' },
+        { iconName: 'brush', title: t('categories.art'), route: 'TeacherDashboard' },
     ];
 
     return (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryList}>
             {categories.map((cat, idx) => (
-                <CategoryItem key={idx} iconName={cat.iconName} title={cat.title} />
+                <CategoryItem 
+                    key={idx} 
+                    iconName={cat.iconName} 
+                    title={cat.title}
+                    onPress={() => navigation.navigate(cat.route)} 
+                />
             ))}
         </ScrollView>
     );
@@ -76,7 +81,7 @@ const ServiceCard = ({ title, imageUri }) => {
     );
 };
 
-const PopularServices = () => {
+const PopularServices = ({ t }) => {
     const services = [
         { title: '피아노 레슨', imageUri: 'https://via.placeholder.com/150' },
         { title: '특허 상담', imageUri: 'https://via.placeholder.com/150' },
@@ -85,7 +90,7 @@ const PopularServices = () => {
 
     return (
         <View style={styles.popularContainer}>
-            <Text style={styles.sectionTitle}>인기 서비스</Text>
+            <Text style={styles.sectionTitle}>{t('popularServices')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {services.map((srv, idx) => (
                     <ServiceCard key={idx} title={srv.title} imageUri={srv.imageUri} />
@@ -95,31 +100,38 @@ const PopularServices = () => {
     );
 };
 
-const LoginPrompt = ({ navigation }) => {
+const LoginPrompt = ({ navigation, t }) => {
     return (
         <View style={styles.loginPromptContainer}>
-            <Text style={styles.loginPromptText}>로그인하고 더 많은 기능을 이용해보세요</Text>
+            <Text style={styles.loginPromptText}>{t('loginPrompt')}</Text>
             <Button
                 mode="outlined"
                 onPress={() => navigation.navigate('Login')}
                 style={styles.loginButton}
                 textColor={BRAND_COLOR}
             >
-                로그인
+                {t('login')}
             </Button>
         </View>
     );
 };
 
 const HomeScreen = ({ navigation }) => {
+    const { t } = useTranslation();
+
+    // AI 스크립트 분석 시스템 개념 주석:
+    // 세션 종료 후 서버에서 녹화된 영상/스크립트를 AI 분석 API에 전달
+    // AI가 분쟁의 잘잘못을 판단 후 환불 또는 대금 지급 결정
+    // 여기서는 UI/UX만 구현하고 실제 로직은 백엔드/AI서버 연동 필요
+
     return (
         <LinearGradient colors={GRADIENT_COLORS} style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <TopBar />
-                <SearchBar />
-                <CategoryList />
-                <PopularServices />
-                <LoginPrompt navigation={navigation} />
+                <TopBar t={t} />
+                <SearchBar t={t} />
+                <CategoryList t={t} navigation={navigation} />
+                <PopularServices t={t} />
+                <LoginPrompt navigation={navigation} t={t} />
             </ScrollView>
         </LinearGradient>
     );

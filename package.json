@@ -18,6 +18,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "i18next": "^24.2.0",
+    "i18next-browser-languagedetector": "^8.0.2",
+    "i18next-http-backend": "^3.0.1",
     "jsonwebtoken": "^9.0.2",
     "react-i18next": "^15.2.0",
     "react-native-gesture-handler": "^2.21.2",

@@ -8,6 +8,11 @@ import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import PushNotification from 'react-native-push-notification';
 import { StripeProvider } from '@stripe/stripe-react-native';
 
+import './src/i18n'; // i18n 초기화
+import { useTranslation } from 'react-i18next';
+
+// Screens
+import HomeScreen from './src/screens/HomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
@@ -17,9 +22,6 @@ import ScheduleScreen from './src/screens/ScheduleScreen';
 import ReservationsScreen from './src/screens/ReservationsScreen';
 import TeacherDashboardScreen from './src/screens/TeacherDashboardScreen';
 import LearnerDashboardScreen from './src/screens/LearnerDashboardScreen';
-
-// 새로 만든 HomeScreen
-import HomeScreen from './src/screens/HomeScreen';
 
 PushNotification.configure({
     onRegister: (token) => console.log("TOKEN:", token),
@@ -51,6 +53,8 @@ const theme = {
 };
 
 const App = () => {
+    const { t } = useTranslation(); // 번역 훅 사용
+
     return (
         <StripeProvider publishableKey="pk_test_51QCCneI2gZFF4ZNkZSkB3QClhh15CYOQ3uGeGDVowYyf9lkwFDcqiwjf4FtZumOMB84hpMDmV6MA3J6Xj70mQJ6f009cw6NpVi">
             <PaperProvider theme={theme}>
@@ -59,8 +63,9 @@ const App = () => {
                         headerStyle: { backgroundColor: '#2f80ed' },
                         headerTintColor: '#fff'
                     }}>
-                        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
-                        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+                        {/* 각 Screen의 title도 t를 사용해서 현지화 가능 */}
+                        <Stack.Screen name="Home" component={HomeScreen} options={{ title: t('appName') }} />
+                        <Stack.Screen name="Login" component={LoginScreen} options={{ title: t('login') }} />
                         <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: 'Sign Up' }} />
                         <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
                         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Edit Profile' }} />
