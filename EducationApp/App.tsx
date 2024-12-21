@@ -8,11 +8,10 @@ import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import PushNotification from 'react-native-push-notification';
 import { StripeProvider } from '@stripe/stripe-react-native';
 
-// i18n 초기화
 import './src/i18n';
 import { useTranslation } from 'react-i18next';
 
-// 기존 Screens
+// Screens
 import HomeScreen from './src/screens/HomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
@@ -24,10 +23,10 @@ import ReservationsScreen from './src/screens/ReservationsScreen';
 import TeacherDashboardScreen from './src/screens/TeacherDashboardScreen';
 import LearnerDashboardScreen from './src/screens/LearnerDashboardScreen';
 
-// 새로 추가된 가입 흐름 예시 Screens (없다면 import 제외)
-import RoleSelectScreen from './src/screens/RoleSelectScreen';
-import LearnerSignupStack from './src/screens/learnerSignup/LearnerSignupStack';
-import TeacherSignupStack from './src/screens/teacherSignup/TeacherSignupStack';
+// ★ 기존 "가입 흐름 예시 Screens"가 아직 없다면 주석 처리하거나 제거하세요 ★
+// import RoleSelectScreen from './src/screens/RoleSelectScreen';
+// import LearnerSignupStack from './src/screens/learnerSignup/LearnerSignupStack';
+// import TeacherSignupStack from './src/screens/teacherSignup/TeacherSignupStack';
 
 // Push Notification 설정
 PushNotification.configure({
@@ -50,7 +49,6 @@ PushNotification.createChannel(
   (created) => console.log(`createChannel returned '${created}'`)
 );
 
-// PaperProvider 테마 설정
 const theme = {
   ...DefaultTheme,
   colors: {
@@ -62,7 +60,7 @@ const theme = {
 const Stack = createStackNavigator();
 
 const App = () => {
-  const { t } = useTranslation(); // 번역 훅 사용
+  const { t } = useTranslation(); // 번역 훅
 
   return (
     <StripeProvider publishableKey="pk_test_51QCCneI2gZFF4ZNkZSkB3QClhh15CYOQ3uGeGDVowYyf9lkwFDcqiwjf4FtZumOMB84hpMDmV6MA3J6Xj70mQJ6f009cw6NpVi">
@@ -75,35 +73,14 @@ const App = () => {
               headerTintColor: '#fff',
             }}
           >
-            {/* 홈 화면 (앱 이름도 t로 다국어 적용 가능) */}
+            {/* Home */}
             <Stack.Screen
               name="Home"
               component={HomeScreen}
               options={{ title: t('appName') }}
             />
 
-            {/* 역할 선택 화면 */}
-            <Stack.Screen
-              name="RoleSelect"
-              component={RoleSelectScreen}
-              options={{ title: t('roleSelectTitle') }}
-            />
-
-            {/* 학습자 가입 스택 */}
-            <Stack.Screen
-              name="LearnerSignupStack"
-              component={LearnerSignupStack}
-              options={{ headerShown: false }}
-            />
-
-            {/* 고수(Teacher) 가입 스택 */}
-            <Stack.Screen
-              name="TeacherSignupStack"
-              component={TeacherSignupStack}
-              options={{ headerShown: false }}
-            />
-
-            {/* 이하 기존 화면들 */}
+            {/* 로그인/회원가입/대시보드 등 기존 Screens */}
             <Stack.Screen
               name="Login"
               component={LoginScreen}
@@ -149,6 +126,25 @@ const App = () => {
               component={LearnerDashboardScreen}
               options={{ title: t('learnerDashboard') }}
             />
+
+            {/* 가입 흐름 추가 시, 실제 파일 경로가 존재할 때만 import & route 추가 */}
+            {/*
+            <Stack.Screen
+              name="RoleSelect"
+              component={RoleSelectScreen}
+              options={{ title: t('roleSelectTitle') }}
+            />
+            <Stack.Screen
+              name="LearnerSignupStack"
+              component={LearnerSignupStack}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="TeacherSignupStack"
+              component={TeacherSignupStack}
+              options={{ headerShown: false }}
+            />
+            */}
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
