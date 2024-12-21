@@ -8,7 +8,6 @@ import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import PushNotification from 'react-native-push-notification';
 import { StripeProvider } from '@stripe/stripe-react-native';
 
-// 기존 화면들
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
@@ -19,7 +18,7 @@ import ReservationsScreen from './src/screens/ReservationsScreen';
 import TeacherDashboardScreen from './src/screens/TeacherDashboardScreen';
 import LearnerDashboardScreen from './src/screens/LearnerDashboardScreen';
 
-// 새로 만든 HomeScreen (이미 C:\Users\marcu\education_app\EducationApp\src\screens\HomeScreen.js 에 HomeScreen이 있다고 가정)
+// 새로 만든 HomeScreen
 import HomeScreen from './src/screens/HomeScreen';
 
 PushNotification.configure({
@@ -56,7 +55,6 @@ const App = () => {
         <StripeProvider publishableKey="pk_test_51QCCneI2gZFF4ZNkZSkB3QClhh15CYOQ3uGeGDVowYyf9lkwFDcqiwjf4FtZumOMB84hpMDmV6MA3J6Xj70mQJ6f009cw6NpVi">
             <PaperProvider theme={theme}>
                 <NavigationContainer>
-                    {/* initialRouteName을 Home으로 변경 */}
                     <Stack.Navigator initialRouteName="Home" screenOptions={{
                         headerStyle: { backgroundColor: '#2f80ed' },
                         headerTintColor: '#fff'

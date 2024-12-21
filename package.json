@@ -17,8 +17,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "i18next": "^24.2.0",
     "jsonwebtoken": "^9.0.2",
-    "react-native-gesture-handler": "^2.21.2"
+    "react-i18next": "^15.2.0",
+    "react-native-gesture-handler": "^2.21.2",
+    "react-native-localize": "^3.3.0"
   },
   "devDependencies": {
     "jest-environment-jsdom": "^29.7.0"

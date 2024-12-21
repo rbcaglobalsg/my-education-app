@@ -1,29 +1,28 @@
 // C:\Users\marcu\education_app\EducationApp\src\screens\HomeScreen.js
 import React from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, Avatar, Card } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 
 const BRAND_COLOR = '#00B894';
+const GRADIENT_COLORS = ['#FFFFFF', '#F0F4F8'];
 
-// 상단바 스타일링
 const TopBar = () => {
     return (
         <View style={styles.topBarContainer}>
             <Text style={styles.appName}>bzla</Text>
-            <TouchableOpacity>
+            <TouchableOpacity style={styles.avatarWrapper}>
                 <Avatar.Image size={40} source={{ uri: 'https://via.placeholder.com/40' }} />
             </TouchableOpacity>
         </View>
     );
 };
 
-// 검색바
 const SearchBar = () => {
     return (
         <View style={styles.searchContainer}>
-            <MaterialCommunityIcons name="magnify" size={24} color="#999" />
+            <MaterialCommunityIcons name="magnify" size={24} color="#666" style={{ marginHorizontal: 5 }} />
             <TextInput
                 placeholder="어떤 서비스를 찾으시나요?"
                 style={styles.searchInput}
@@ -31,13 +30,12 @@ const SearchBar = () => {
                 mode="flat"
             />
             <TouchableOpacity>
-                <MaterialCommunityIcons name="microphone" size={24} color="#999" />
+                <MaterialCommunityIcons name="microphone" size={24} color="#666" style={{ marginHorizontal: 5 }} />
             </TouchableOpacity>
         </View>
     );
 };
 
-// 카테고리 아이콘 버튼
 const CategoryItem = ({ iconName, title }) => {
     return (
         <TouchableOpacity style={styles.categoryItem}>
@@ -49,15 +47,14 @@ const CategoryItem = ({ iconName, title }) => {
     );
 };
 
-// 카테고리 리스트
 const CategoryList = () => {
     const categories = [
-        { iconName: 'home', title: '홈' },
-        { iconName: 'account', title: '강사찾기' },
-        { iconName: 'book', title: '과외' },
+        { iconName: 'home-outline', title: '홈' },
+        { iconName: 'account-search-outline', title: '강사찾기' },
+        { iconName: 'book-outline', title: '과외' },
         { iconName: 'guitar-acoustic', title: '악기레슨' },
-        { iconName: 'car', title: '운전' },
-        { iconName: 'heart', title: '헬스/요가' },
+        { iconName: 'car-outline', title: '운전' },
+        { iconName: 'heart-outline', title: '헬스/요가' },
         { iconName: 'brush', title: '미술/디자인' },
     ];
 
@@ -70,17 +67,15 @@ const CategoryList = () => {
     );
 };
 
-// 인기 서비스 카드
 const ServiceCard = ({ title, imageUri }) => {
     return (
         <Card style={styles.serviceCard}>
-            <Card.Cover source={{ uri: imageUri }} style={{ height: 100 }} />
-            <Card.Title title={title} titleStyle={{ fontSize: 14 }} />
+            <Card.Cover source={{ uri: imageUri }} style={styles.serviceCardImage} />
+            <Card.Title title={title} titleStyle={styles.serviceCardTitle} />
         </Card>
     );
 };
 
-// 인기 서비스 섹션
 const PopularServices = () => {
     const services = [
         { title: '피아노 레슨', imageUri: 'https://via.placeholder.com/150' },
@@ -100,12 +95,16 @@ const PopularServices = () => {
     );
 };
 
-// 로그인 유도 섹션
 const LoginPrompt = ({ navigation }) => {
     return (
         <View style={styles.loginPromptContainer}>
             <Text style={styles.loginPromptText}>로그인하고 더 많은 기능을 이용해보세요</Text>
-            <Button mode="outlined" onPress={() => navigation.navigate('Login')} style={styles.loginButton}>
+            <Button
+                mode="outlined"
+                onPress={() => navigation.navigate('Login')}
+                style={styles.loginButton}
+                textColor={BRAND_COLOR}
+            >
                 로그인
             </Button>
         </View>
@@ -114,8 +113,8 @@ const LoginPrompt = ({ navigation }) => {
 
 const HomeScreen = ({ navigation }) => {
     return (
-        <LinearGradient colors={['#ffffff', '#f4f4f9']} style={styles.container}>
-            <ScrollView>
+        <LinearGradient colors={GRADIENT_COLORS} style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
                 <TopBar />
                 <SearchBar />
                 <CategoryList />
@@ -129,17 +128,24 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 40,
+    },
+    scrollContent: {
+        paddingTop: 50,
+        paddingBottom: 60,
     },
     topBarContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
-        marginBottom: 10,
+        marginBottom: 20,
+    },
+    avatarWrapper: {
+        borderRadius: 20,
+        overflow: 'hidden',
     },
     appName: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         color: BRAND_COLOR,
     },
@@ -153,12 +159,17 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         borderWidth: 1,
         borderColor: '#ddd',
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
     },
     searchInput: {
         flex: 1,
         marginHorizontal: 10,
         paddingVertical: 0,
         fontSize: 16,
+        backgroundColor: 'transparent',
     },
     categoryList: {
         marginHorizontal: 20,
@@ -176,6 +187,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 5,
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
     },
     categoryText: {
         fontSize: 12,
@@ -183,16 +198,30 @@ const styles = StyleSheet.create({
     },
     popularContainer: {
         marginHorizontal: 20,
-        marginBottom: 20,
+        marginBottom: 30,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: '600',
         marginBottom: 10,
+        color: '#333',
     },
     serviceCard: {
         width: 120,
         marginRight: 10,
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    serviceCardImage: {
+        height: 100,
+        backgroundColor: '#f0f0f0',
+    },
+    serviceCardTitle: {
+        fontSize: 14,
+        color: '#333',
     },
     loginPromptContainer: {
         backgroundColor: '#fff',
@@ -203,14 +232,21 @@ const styles = StyleSheet.create({
         borderColor: '#ddd',
         marginBottom: 40,
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
     },
     loginPromptText: {
         fontSize: 14,
         marginBottom: 10,
+        color: '#333',
     },
     loginButton: {
         borderColor: BRAND_COLOR,
-    }
+        borderRadius: 20,
+        paddingHorizontal: 20,
+    },
 });
 
 export default HomeScreen;
